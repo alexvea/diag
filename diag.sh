@@ -26,32 +26,39 @@ function test_value {
                 ">")
                         [[ $2 -gt $1 ]]
                 ;;
+                "!=")
+                        [[ $2 != $1 ]]
+                ;;
         esac
 }
 
 function display_check_nok {
-        echo -e "${RED} [ERROR] ${NC} $1 - More infos : $2" 
+        echo -e "${RED} [ERROR] ${NC} $1"
+        echo -e "         More infos : $2" 
 }
 for test in `download_list`; do
         to_display=0
-        TYPE=$(echo $test | awk -F'|' '{ print $1 }')
-        DESCRIPTION=$(echo $test | awk -F'|' '{ print $2 }')
-        COMMAND=$(echo $test | awk -F'|' '{ print $3 }')
-        EXPECTED_RESULT=$(echo $test | awk -F'|' '{ print $4 }')
-        OUTPUT_IF_EXPECTED=$(echo $test | awk -F'|' '{ print $5 }')
+        TYPE=$(echo $test | awk -F'[|][|]' '{ print $1 }')
+        DESCRIPTION=$(echo $test | awk -F'[|][|]' '{ print $2 }')
+        COMMAND=$(echo $test | awk -F'[|][|]' '{ print $3 }')
+        EXPECTED_RESULT=$(echo $test | awk -F'[|][|]' '{ print $4 }')
+        OUTPUT_IF_EXPECTED=$(echo $test | awk -F'[|][|]' '{ print $5 }')
+        EXPECTED_RESULT_TYPE=$(echo $EXPECTED_RESULT  | awk -F';' '{ print $1 }')
+        EXPECTED_RESULT_VALUE=$([[ "${EXPECTED_RESULT_TYPE}" == "cmd" ]] && echo $EXPECTED_RESULT  | awk -F';' '{ print $2 }' | bash || echo $EXPECTED_RESULT | awk -F';' '{ print $2 }')
+        EXPECTED_RESULT_SIGN=$(echo $EXPECTED_RESULT  | awk -F';' '{ print $3 }')
         case $TYPE in
                 "SQL")
                         CURRENT_RESULT=`/usr/bin/env mysql -h$db_host -u$db_user -p$db_passwd -e $COMMAND | grep -E -o "[0-9]+"`
-                        EXPECTED_RESULT_TYPE=$(echo $EXPECTED_RESULT  | awk -F';' '{ print $1 }')
-                        EXPECTED_RESULT_VALUE=$([[ "${EXPECTED_RESULT_TYPE}" == "cmd" ]] && echo $EXPECTED_RESULT  | awk -F';' '{ print $2 }' | bash || echo $EXPECTED_RESULT | awk -F';' '{ print $2 }')
-                        EXPECTED_RESULT_SIGN=$(echo $EXPECTED_RESULT  | awk -F';' '{ print $3 }')
-                        test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN && display_check_nok $DESCRIPTION $OUTPUT_IF_EXPECTED
-                        #test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN || display_check_nok $DESCRIPTION $OUTPUT_IF_EXPECTED
                 ;;
 
 
                 "FILE")
 
                 ;;
+                "CMD")
+                        CURRENT_RESULT=`echo $COMMAND | bash`
+                ;;
         esac
+#       test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN && display_check_nok $DESCRIPTION $OUTPUT_IF_EXPECTED
+        test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN || display_check_nok $DESCRIPTION $OUTPUT_IF_EXPECTED
 done
