@@ -1,2 +1,2 @@
-SQL|SELECT DISTINCT COUNT(metric_id) FROM centreon_storage.metrics WHERE index_id IS NULL;|0|"DELETE FROM centreon_storage.metrics WHERE index_id IS NOT NULL;"
-SQL|SELECT COUNT(*) FROM centreon.host WHERE host_register='1';|grep -Po '(?<="hosts":)[^,]*' /etc/centreon/license.d/epp.license|"https://docs.centreon.com/docs/administration/licenses/#your-epp-license-is-not-valid"
+SQL|SELECT DISTINCT COUNT(metric_id) FROM centreon_storage.metrics WHERE index_id IS NULL|0|"DELETE FROM centreon_storage.metrics WHERE index_id IS NOT NULL;"
+SQL|SELECT COUNT(*) FROM centreon.host WHERE host_register='1'|grep -Po '(?<="hosts":)[^,]*' /etc/centreon/license.d/epp.license|"https://docs.centreon.com/docs/administration/licenses/#your-epp-license-is-not-valid"
