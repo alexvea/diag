@@ -36,6 +36,11 @@ function display_check_nok {
         echo -e "${RED} [ERROR] ${NC} $1"
         echo -e "         More infos : $2" 
 }
+
+function display_check_ok {
+        echo -e "${GREEN} [OK] ${NC} $1"
+}
+
 for test in `download_list`; do
         to_display=0
         TYPE=$(echo $test | awk -F'[|][|]' '{ print $1 }')
@@ -59,6 +64,5 @@ for test in `download_list`; do
                         CURRENT_RESULT=`echo $COMMAND | bash`
                 ;;
         esac
-#       test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN && display_check_nok $DESCRIPTION $OUTPUT_IF_EXPECTED
-        test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN || display_check_nok $DESCRIPTION $OUTPUT_IF_EXPECTED
+        test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN && display_check_ok $DESCRIPTION || display_check_nok $DESCRIPTION $OUTPUT_IF_EXPECTED
 done
