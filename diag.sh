@@ -50,6 +50,7 @@ function test_value {
                         [[ $2 != $1 ]]
                 ;;
         esac
+return $?
 }
 
 function display_check {
@@ -85,7 +86,6 @@ for test in `download_list`; do
         TYPE=$(echo $test | awk -F'[|][|]' '{ print $1 }')
         DESCRIPTION=$(echo $test | awk -F'[|][|]' '{ print $2 }')
         COMMAND=$(echo $test | awk -F'[|][|]' '{ print $3 }')
-        [[ $DEBUG == 1 ]] && display_check debug $COMMAND
         EXPECTED_RESULT=$(echo $test | awk -F'[|][|]' '{ print $4 }')
         OUTPUT_IF_EXPECTED=$(echo $test | awk -F'[|][|]' '{ print $5 }')
         EXPECTED_RESULT_TYPE=$(echo $EXPECTED_RESULT  | awk -F';' '{ print $1 }')
@@ -106,4 +106,5 @@ for test in `download_list`; do
         esac
 
         test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN && display_check ok $DESCRIPTION || display_check nok $DESCRIPTION $OUTPUT_IF_EXPECTED
+        [[ $DEBUG == 1 ]] && display_check debug $COMMAND
 done
