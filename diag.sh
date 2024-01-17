@@ -32,7 +32,7 @@ set +x
 
 
 function download_list {
-        curl -s https://raw.githubusercontent.com/alexvea/diag/main/sql/check_list
+        curl -s https://raw.githubusercontent.com/alexvea/diag/main/data/check_list
 }
 
 function test_value {
