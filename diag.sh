@@ -27,8 +27,8 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 
 DEBUG=0
-[[ $DEBUG == 1 ]] && set -x
-set +x
+#[[ $DEBUG == 1 ]] && set -x
+#set +x
 
 
 function download_list {
@@ -88,9 +88,9 @@ for test in `download_list`; do
         COMMAND=$(echo $test | awk -F'[|][|]' '{ print $3 }')
         EXPECTED_RESULT=$(echo $test | awk -F'[|][|]' '{ print $4 }')
         OUTPUT_IF_EXPECTED=$(echo $test | awk -F'[|][|]' '{ print $5 }')
-        EXPECTED_RESULT_TYPE=$(echo $EXPECTED_RESULT  | awk -F';' '{ print $1 }')
-        EXPECTED_RESULT_VALUE=$([[ "${EXPECTED_RESULT_TYPE}" == "cmd" ]] && echo $EXPECTED_RESULT  | awk -F';' '{ print $2 }' | bash || echo $EXPECTED_RESULT | awk -F';' '{ print $2 }')
-        EXPECTED_RESULT_SIGN=$(echo $EXPECTED_RESULT  | awk -F';' '{ print $3 }')
+        EXPECTED_RESULT_TYPE=$(echo $EXPECTED_RESULT  | awk -F';;' '{ print $1 }')
+        EXPECTED_RESULT_VALUE=$([[ "${EXPECTED_RESULT_TYPE}" == "cmd" ]] && echo $EXPECTED_RESULT  | awk -F';;' '{ print $2 }' | bash || echo $EXPECTED_RESULT | awk -F';;' '{ print $2 }')
+        EXPECTED_RESULT_SIGN=$(echo $EXPECTED_RESULT  | awk -F';;' '{ print $3 }')
         case $TYPE in
                 "SQL")
                         CURRENT_RESULT=`/usr/bin/env mysql -h$db_host -u$db_user -p$db_passwd -e $COMMAND | grep -E -o "[0-9]+"`
