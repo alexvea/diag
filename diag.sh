@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
+############################################################
+# Help                                                     #
+############################################################
+Help()
+{
+   # Display Help
+   echo "The script will work on a specific Box folder"
+   echo "to convert exif metadata to box metadata with chl-icono template."
+   echo "Syntax: scriptTemplate [-h|a|d|r]"
+   echo "options:"
+   echo "h     Print this help."
+   echo "d     Display debug"
+   echo
+}
 conf_path=/etc/centreon/conf.pm
 db_user=$(grep mysql_user $conf_path | awk '{ print substr($3,2,length($3) - 3); }')
 db_passwd=$(grep mysql_passwd $conf_path | awk '{ print substr($3,2,length($3) - 3); }')
@@ -10,6 +24,12 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+
+DEBUG=0
+[[ $DEBUG == 1 ]] && set -x
+set +x
+
 
 function download_list {
         curl -s https://raw.githubusercontent.com/alexvea/diag/main/sql/check_list
@@ -32,20 +52,40 @@ function test_value {
         esac
 }
 
-function display_check_nok {
-        echo -e "${RED} [ERROR] ${NC} $1"
-        echo -e "         More infos : $2" 
+function display_check {
+        case $1 in
+                "nok")
+                        echo -e "${RED} [ERROR] ${NC} $2"
+                        echo -e "         More infos : $3"
+                ;;
+                "ok")
+                        echo -e "${GREEN} [OK] ${NC} $2"
+                ;;
+                "debug")
+                        echo -e "${BLUE} [DEBUG] ${NC} $2"
+                ;;
+        esac
 }
 
-function display_check_ok {
-        echo -e "${GREEN} [OK] ${NC} $1"
-}
 
+while getopts "n:arhd" option; do
+   case $option in
+      h) # display Help
+         Help
+         exit;;
+      d) #display debug
+         DEBUG=1
+         ;;
+     \?) # Invalid option
+         exit;;
+   esac
+done
 for test in `download_list`; do
         to_display=0
         TYPE=$(echo $test | awk -F'[|][|]' '{ print $1 }')
         DESCRIPTION=$(echo $test | awk -F'[|][|]' '{ print $2 }')
         COMMAND=$(echo $test | awk -F'[|][|]' '{ print $3 }')
+        [[ $DEBUG == 1 ]] && display_check debug $COMMAND
         EXPECTED_RESULT=$(echo $test | awk -F'[|][|]' '{ print $4 }')
         OUTPUT_IF_EXPECTED=$(echo $test | awk -F'[|][|]' '{ print $5 }')
         EXPECTED_RESULT_TYPE=$(echo $EXPECTED_RESULT  | awk -F';' '{ print $1 }')
@@ -64,5 +104,6 @@ for test in `download_list`; do
                         CURRENT_RESULT=`echo $COMMAND | bash`
                 ;;
         esac
-        test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN && display_check_ok $DESCRIPTION || display_check_nok $DESCRIPTION $OUTPUT_IF_EXPECTED
+
+        test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN && display_check ok $DESCRIPTION || display_check nok $DESCRIPTION $OUTPUT_IF_EXPECTED
 done
