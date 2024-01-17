@@ -5,9 +5,8 @@
 Help()
 {
    # Display Help
-   echo "The script will work on a specific Box folder"
-   echo "to convert exif metadata to box metadata with chl-icono template."
-   echo "Syntax: scriptTemplate [-h|a|d|r]"
+   echo "The script will help to diagnose somes cases on your Centreon platform."
+   echo "Syntax: [-h|d]"
    echo "options:"
    echo "h     Print this help."
    echo "d     Display debug"
