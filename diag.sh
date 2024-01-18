@@ -34,7 +34,6 @@ DEBUG=0
 #[[ $DEBUG == 1 ]] && set -x
 #set +x
 
-
 function download_list {
         curl -s https://raw.githubusercontent.com/alexvea/diag/main/data/check_list
 }
@@ -83,7 +82,6 @@ function display_check {
         esac
 }
 
-
 while getopts "n:arhd" option; do
    case $option in
       h) # display Help
@@ -120,6 +118,5 @@ for test in `download_list`; do
         esac
         [ -z "$CURRENT_RESULT" ] && CURRENT_RESULT="NULL"
         test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN $EXPECTED_RESULT_DISPLAY_TYPE $DESCRIPTION $OUTPUT_IF_EXPECTED
-#       test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN && display_check ok $DESCRIPTION || display_check nok $DESCRIPTION $OUTPUT_IF_EXPECTED
         [[ $DEBUG == 1 ]] && display_check debug $COMMAND
 done
