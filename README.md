@@ -5,7 +5,7 @@
 * Need to have internet to access the github website.
 * Only work on Central server (local or deported DB server).
 
-##How to use : 
+## How to use : 
 ```
  bash <(curl -s https://raw.githubusercontent.com/alexvea/diag/main/diag.sh)
 ```
