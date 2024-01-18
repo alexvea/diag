@@ -36,8 +36,7 @@ DEBUG=0
 #[[ $DEBUG == 1 ]] && set -x
 #set +x
 
-
-function download_list {
+function curl_download_list {
         curl -s https://raw.githubusercontent.com/alexvea/diag/main/data/check_list
 }
 
@@ -69,17 +68,17 @@ function display_check {
         case $1 in
                 "error")
                         echo -e "${RED} [ERROR] ${NC} $2"
-                        echo -e "         More infos : $3"
+                        echo -e "               More infos : $3"
                 ;;
                 "ok")
-                        echo -e "${GREEN} [OK] ${NC} $2"
+                        echo -e "${GREEN}   [OK]  ${NC} $2"
                 ;;
                 "debug")
-                        echo -e "[DEBUG] ${NC} $2"
+                        echo -e "       [DEBUG] ${NC} $2"
                 ;;
                 "info")
-                        echo -e "${BLUE} [INFO] ${NC} $2"
-                        echo -e "         More infos : $3"
+                        echo -e "${BLUE} [INFO]  ${NC} $2"
+                        echo -e "               More infos : $3"
                 ;;
         esac
 }
@@ -97,7 +96,11 @@ while getopts "n:arhd" option; do
          exit;;
    esac
 done
-for test in `download_list`; do
+download_list=`curl_download_list`
+nb_line=`echo "$download_list" | wc -l`
+x=0
+for test in $download_list; do
+        ((x++))
         to_display=0
         TYPE=$(echo $test | awk -F${AWK_LINE_DELIM} '{ print $1 }')
         DESCRIPTION=$(echo $test | awk -F${AWK_LINE_DELIM} '{ print $2 }')
@@ -120,6 +123,7 @@ for test in `download_list`; do
                 ;;
         esac
         [ -z "$CURRENT_RESULT" ] && CURRENT_RESULT="NULL"
+        [[ $x -lt 10 ]] && space=" " || space=""; echo -ne "$space$x/$nb_line "
         test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN $EXPECTED_RESULT_DISPLAY_TYPE $DESCRIPTION $OUTPUT_IF_EXPECTED
         [[ $DEBUG == 1 ]] && display_check debug $COMMAND
 done
