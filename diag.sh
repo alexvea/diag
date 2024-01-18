@@ -89,9 +89,9 @@ function validate_line {
         forth_field_regex='^(value|cmd);;;.*;;;(=|>|<|!=);;;(info|error)'
         five_field_regex='^$'
         awk -v AWK_LINE_DELIM="${AWK_LINE_DELIM}" -v column_nb="$column_nb" -v first_field_regex="$first_field_regex" -v forth_field_regex="$forth_field_regex" -v five_field_regex="$five_field_regex" -v err=0 'BEGIN{FS=OFS=AWK_LINE_DELIM} NF!=column_nb{print " Incorrect number of fields in this test : need " column_nb; err = 1;exit err}
-        !($1~first_field_regex) {print "                1st field invalid, should be "first_field_regex; err = 1}
-        !($4~forth_field_regex) {print "                4th field invalid, should be "forth_field_regex; err = 1}
-        ($5~five_field_regex) {print "          5th field invalid, should not be "five_field_regex; err = 1}
+        !($1~first_field_regex) {print " 1st field invalid, should be "first_field_regex; err = 1}
+        !($4~forth_field_regex) {print " 4th field invalid, should be "forth_field_regex; err = 1}
+        ($5~five_field_regex) {print " 5th field invalid, should not be "five_field_regex; err = 1}
         !(true) {exit err}' <<< $1
 }
 
