@@ -83,6 +83,17 @@ function display_check {
         esac
 }
 
+function validate_line {
+        column_nb=5
+        first_field_regex='^(CMD|SQL)'
+        forth_field_regex='^(value|cmd);;;.*;;;(=|>|<|!=);;;(info|error)'
+        five_field_regex='^$'
+        awk -v AWK_LINE_DELIM="${AWK_LINE_DELIM}" -v column_nb="$column_nb" -v first_field_regex="$first_field_regex" -v forth_field_regex="$forth_field_regex" -v five_field_regex="$five_field_regex" -v err=0 'BEGIN{FS=OFS=AWK_LINE_DELIM} NF!=column_nb{print " Incorrect number of fields in this test : need " column_nb; err = 1;exit err}
+        !($1~first_field_regex) {print "                1st field invalid, should be "first_field_regex; err = 1}
+        !($4~forth_field_regex) {print "                4th field invalid, should be "forth_field_regex; err = 1}
+        ($5~five_field_regex) {print "          5th field invalid, should not be "five_field_regex; err = 1}
+        !(true) {exit err}' <<< $1
+}
 
 while getopts "n:arhd" option; do
    case $option in
@@ -101,7 +112,8 @@ nb_line=`echo "$download_list" | wc -l`
 x=0
 for test in $download_list; do
         ((x++))
-        to_display=0
+        [[ $x -lt 10 ]] && space=" " || space=""; echo -ne "$space$x/$nb_line "
+        validate_line $test || continue
         TYPE=$(echo $test | awk -F${AWK_LINE_DELIM} '{ print $1 }')
         DESCRIPTION=$(echo $test | awk -F${AWK_LINE_DELIM} '{ print $2 }')
         COMMAND=$(echo $test | awk -F${AWK_LINE_DELIM} '{ print $3 }')
@@ -123,7 +135,6 @@ for test in $download_list; do
                 ;;
         esac
         [ -z "$CURRENT_RESULT" ] && CURRENT_RESULT="NULL"
-        [[ $x -lt 10 ]] && space=" " || space=""; echo -ne "$space$x/$nb_line "
         test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN $EXPECTED_RESULT_DISPLAY_TYPE $DESCRIPTION $OUTPUT_IF_EXPECTED
         [[ $DEBUG == 1 ]] && display_check debug $COMMAND
 done
