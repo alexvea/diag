@@ -39,6 +39,12 @@ function download_list {
 }
 
 function test_value {
+#$1 $CURRENT_RESULT
+#$2 $EXPECTED_RESULT_VALUE 
+#$3 $EXPECTED_RESULT_SIGN 
+#$4 $EXPECTED_RESULT_DISPLAY_TYPE 
+#$5 $DESCRIPTION
+#$6 $OUTPUT_IF_EXPECTED
          case $3 in
                 "=")
                         [[ $2 == $1 ]] 
@@ -53,12 +59,12 @@ function test_value {
                         [[ $2 != $1 ]]
                 ;;
         esac
-return $?
+[[ $? -eq 0 ]] && display_check ok $5 || display_check $4 $5 `echo $6 | sed "s/RESULT_VALUE/$1/g"`
 }
 
 function display_check {
         case $1 in
-                "nok")
+                "error")
                         echo -e "${RED} [ERROR] ${NC} $2"
                         echo -e "         More infos : $3"
                 ;;
@@ -66,10 +72,16 @@ function display_check {
                         echo -e "${GREEN} [OK] ${NC} $2"
                 ;;
                 "debug")
-                        echo -e "${BLUE} [DEBUG] ${NC} $2"
+                        echo -e "[DEBUG] ${NC} $2"
                 ;;
+                "info")
+                        echo -e "${BLUE} [INFO] ${NC} $2"
+                        echo -e "         More infos : $3"
+                ;;
+
         esac
 }
+
 
 while getopts "n:arhd" option; do
    case $option in
@@ -93,12 +105,11 @@ for test in `download_list`; do
         EXPECTED_RESULT_TYPE=$(echo $EXPECTED_RESULT  | awk -F';;' '{ print $1 }')
         EXPECTED_RESULT_VALUE=$([[ "${EXPECTED_RESULT_TYPE}" == "cmd" ]] && echo $EXPECTED_RESULT  | awk -F';;' '{ print $2 }' | bash || echo $EXPECTED_RESULT | awk -F';;' '{ print $2 }')
         EXPECTED_RESULT_SIGN=$(echo $EXPECTED_RESULT  | awk -F';;' '{ print $3 }')
+        EXPECTED_RESULT_DISPLAY_TYPE=$(echo $EXPECTED_RESULT  | awk -F';;' '{ print $4 }')
         case $TYPE in
                 "SQL")
                         CURRENT_RESULT=`/usr/bin/env mysql -h$db_host -u$db_user -p$db_passwd -e $COMMAND | grep -E -o "[0-9]+"`
                 ;;
-
-
                 "FILE")
 
                 ;;
@@ -106,7 +117,6 @@ for test in `download_list`; do
                         CURRENT_RESULT=`echo $COMMAND | bash`
                 ;;
         esac
-
-        test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN && display_check ok $DESCRIPTION || display_check nok $DESCRIPTION $OUTPUT_IF_EXPECTED
+        test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN $EXPECTED_RESULT_DISPLAY_TYPE $DESCRIPTION $OUTPUT_IF_EXPECTED
         [[ $DEBUG == 1 ]] && display_check debug $COMMAND
 done
