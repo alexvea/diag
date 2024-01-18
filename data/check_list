@@ -16,3 +16,4 @@ SQL|||Check how many contacts don't have ACL and are not admin|||SELECT COUNT(*)
 TEST|||Check_test|||value;;;0;;;=;;;info|||
 SQL|||Check_test|||value;;;0;;;=|||
 SQL|||Check_test|||SELECT COUNT(*) FROM centreon.c|||value;;;0;;;=|||TOTO
+TEST|||Check_test|||value;;;0;;;=;|||
