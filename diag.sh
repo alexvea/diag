@@ -13,6 +13,10 @@ Help()
    echo
 }
 conf_path=/etc/centreon/conf.pm
+if [ ! -f "$conf_path" ]; then
+        echo "The file $conf_path doesn't exist. Are you on a Central server ?"
+        exit
+fi
 db_user=$(grep mysql_user $conf_path | awk '{ print substr($3,2,length($3) - 3); }')
 db_passwd=$(grep mysql_passwd $conf_path | awk '{ print substr($3,2,length($3) - 3); }')
 db_host=$(grep mysql_host $conf_path | awk '{ print substr($3,2,length($3) - 3); }' | awk -F":" ' { print $1 } ')
@@ -66,11 +70,6 @@ function display_check {
                 ;;
         esac
 }
-
-if [ ! -f "$conf_path" ]; then
-        echo "The file $conf_path doesn't exist. Are you on a Central server ?"
-        exit
-fi
 
 while getopts "n:arhd" option; do
    case $option in
