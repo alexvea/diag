@@ -23,11 +23,12 @@ db_host=$(grep mysql_host $conf_path | awk '{ print substr($3,2,length($3) - 3);
 OIFS="$IFS"
 IFS=$'\n'
 
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
+RED=$'\033[0;31m'
+NC=$'\033[0m' # No Color
+GREEN=$'\033[0;32m'
+YELLOW=$'\033[1;33m'
+BLUE=$'\033[0;34m'
+PURPLE=$'\033[0;35m'
 
 DEBUG=0
 #[[ $DEBUG == 1 ]] && set -x
@@ -59,7 +60,7 @@ function test_value {
                         [[ $2 != $1 ]]
                 ;;
         esac
-[[ $? -eq 0 ]] && display_check ok $5 || display_check $4 $5 `echo $6 | sed "s/RESULT_VALUE/$1/g" | sed "s/EXPECTED_VALUE/$2/g"`
+[[ $? -eq 0 ]] && display_check ok $5 || display_check $4 $5 `echo $6 | sed "s/RESULT_VALUE/${YELLOW}$1${NC}/" | sed "s/EXPECTED_VALUE/${PURPLE}$2${NC}/g"`
 }
 
 function display_check {
@@ -119,5 +120,6 @@ for test in `download_list`; do
         esac
         [ -z "$CURRENT_RESULT" ] && CURRENT_RESULT="NULL"
         test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN $EXPECTED_RESULT_DISPLAY_TYPE $DESCRIPTION $OUTPUT_IF_EXPECTED
+#       test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN && display_check ok $DESCRIPTION || display_check nok $DESCRIPTION $OUTPUT_IF_EXPECTED
         [[ $DEBUG == 1 ]] && display_check debug $COMMAND
 done
