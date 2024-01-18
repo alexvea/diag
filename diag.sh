@@ -59,7 +59,7 @@ function test_value {
                         [[ $2 != $1 ]]
                 ;;
         esac
-[[ $? -eq 0 ]] && display_check ok $5 || display_check $4 $5 `echo $6 | sed "s/RESULT_VALUE/$1/g"`
+[[ $? -eq 0 ]] && display_check ok $5 || display_check $4 $5 `echo $6 | sed "s/RESULT_VALUE/$1/g" | sed "s/EXPECTED_VALUE/$2/g"`
 }
 
 function display_check {
@@ -117,6 +117,7 @@ for test in `download_list`; do
                         CURRENT_RESULT=`echo $COMMAND | bash`
                 ;;
         esac
+        [ -z "$CURRENT_RESULT" ] && CURRENT_RESULT="NULL"
         test_value $CURRENT_RESULT $EXPECTED_RESULT_VALUE $EXPECTED_RESULT_SIGN $EXPECTED_RESULT_DISPLAY_TYPE $DESCRIPTION $OUTPUT_IF_EXPECTED
         [[ $DEBUG == 1 ]] && display_check debug $COMMAND
 done
