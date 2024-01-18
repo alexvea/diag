@@ -48,6 +48,10 @@ example with CMD command type with placeholders RESULT_VALUE and EXPECTED_VALUE 
 ```
 CMD|||Check if cbd service is active|||/usr/bin/env systemctl status cbd | /usr/bin/env grep -Po '(?<=Active:)[^,]*' | /usr/bin/env awk ' { print $ 1 }'|||value;;;active;;;=;;;error|||The cbd service is "RESULT_VALUE", it should be "EXPECTED_VALUE". Please check the logs in this directory /var/log/centreon-broker/
 ```
+example with SQL command type and cmd for expected type value (to compare the value of a sql request and the value in a file) :
+```
+SQL|||Check if hosts is more than license limit|||SELECT COUNT(*) FROM centreon.host WHERE host_register='1'|||cmd;;;nb=`/usr/bin/env grep -Po '(?<="hosts":)[^,]*' /etc/centreon/license.d/epp.license`;if [[ $nb -eq -1 ]]; then /usr/bin/env echo 99999999;else /usr/bin/env echo $nb; fi;;;>;;;error|||https://docs.centreon.com/docs/administration/licenses/#your-epp-license-is-not-valid
+```
 
 
 
