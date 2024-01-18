@@ -29,5 +29,8 @@ Functionnalities :
   3. ERROR when the expected test is not matched with tag error. Display the test description and more info output.
   4. DEBUG when -d option is used. Add a line with the test command.
  
- 
-     
+
+ Example :
+ ![image](https://github.com/alexvea/diag/assets/35368807/726d4978-ba46-44d5-bc5b-2baa0bde74d5)
+
+
