@@ -40,9 +40,14 @@ Using ||| and ;;; delimiters to be able to use the bash syntax || false conditio
 ```
 Command type[SQL|CMD]|||Description of the test|||Test command|||Expected type value[value|cmd];;;Expected value;;;Test sign[=|>|<|!=];;;Tag[info|error]|||Non expected output
 ```
-example :
+example with SQL command type :
 ```
 SQL|||Check if the local admin is blocked|||SELECT COUNT(*) FROM centreon.contact WHERE blocking_time IS NOT NULL AND contact_id = 1|||value;;;0;;;=;;;error|||Please see this link : https://support.centreon.com/hc/en-us/articles/10342991678609--User-is-blocked-error-message-on-Centreon-login-page
 ```
+example with CMD command type with placeholders RESULT_VALUE and EXPECTED_VALUE in "Non expected output" column : 
+```
+CMD|||Check if cbd service is active|||/usr/bin/env systemctl status cbd | /usr/bin/env grep -Po '(?<=Active:)[^,]*' | /usr/bin/env awk ' { print $ 1 }'|||value;;;active;;;=;;;error|||The cbd service is "RESULT_VALUE", it should be "EXPECTED_VALUE". Please check the logs in this directory /var/log/centreon-broker/
+```
+
 
 
