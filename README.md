@@ -22,4 +22,12 @@ Functionnalities :
 
 * Compatible with SQL request, bash oneliner with characters ||(false condition) and ;;(case).
 * Placeholders to get tested and retrieved values on non-expected case output.
-* 4 types of output : OK, INFO, DEBUG, ERROR.
+* 4 types of output : OK, INFO, ERROR, DEBUG.
+
+  1. OK when the expected test is matched. Only display the test description.
+  2. INFO when the expected test is not matched with tag info. Display the test description and more info output.
+  3. ERROR when the expected test is not matched with tag error. Display the test description and more info output.
+  4. DEBUG when -d option is used. Add a line with the test command.
+ 
+ 
+     
