@@ -67,6 +67,10 @@ function display_check {
         esac
 }
 
+if [ ! -f "$conf_path" ]; then
+        echo "The file $conf_path doesn't exist. Are you on a Central server ?"
+        exit
+fi
 
 while getopts "n:arhd" option; do
    case $option in
