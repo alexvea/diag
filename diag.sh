@@ -20,19 +20,22 @@ fi
 db_user=$(grep mysql_user $conf_path | awk '{ print substr($3,2,length($3) - 3); }')
 db_passwd=$(grep mysql_passwd $conf_path | awk '{ print substr($3,2,length($3) - 3); }')
 db_host=$(grep mysql_host $conf_path | awk '{ print substr($3,2,length($3) - 3); }' | awk -F":" ' { print $1 } ')
+
 OIFS="$IFS"
 IFS=$'\n'
-
 RED=$'\033[0;31m'
 NC=$'\033[0m' # No Color
 GREEN=$'\033[0;32m'
 YELLOW=$'\033[1;33m'
 BLUE=$'\033[0;34m'
 PURPLE=$'\033[0;35m'
+AWK_LINE_DELIM='[|][|][|]'
+AWK_EXPECT_DELIM=';;;'
 
 DEBUG=0
 #[[ $DEBUG == 1 ]] && set -x
 #set +x
+
 
 function download_list {
         curl -s https://raw.githubusercontent.com/alexvea/diag/main/data/check_list
@@ -78,9 +81,9 @@ function display_check {
                         echo -e "${BLUE} [INFO] ${NC} $2"
                         echo -e "         More infos : $3"
                 ;;
-
         esac
 }
+
 
 while getopts "n:arhd" option; do
    case $option in
@@ -96,15 +99,15 @@ while getopts "n:arhd" option; do
 done
 for test in `download_list`; do
         to_display=0
-        TYPE=$(echo $test | awk -F'[|][|]' '{ print $1 }')
-        DESCRIPTION=$(echo $test | awk -F'[|][|]' '{ print $2 }')
-        COMMAND=$(echo $test | awk -F'[|][|]' '{ print $3 }')
-        EXPECTED_RESULT=$(echo $test | awk -F'[|][|]' '{ print $4 }')
-        OUTPUT_IF_EXPECTED=$(echo $test | awk -F'[|][|]' '{ print $5 }')
-        EXPECTED_RESULT_TYPE=$(echo $EXPECTED_RESULT  | awk -F';;' '{ print $1 }')
-        EXPECTED_RESULT_VALUE=$([[ "${EXPECTED_RESULT_TYPE}" == "cmd" ]] && echo $EXPECTED_RESULT  | awk -F';;' '{ print $2 }' | bash || echo $EXPECTED_RESULT | awk -F';;' '{ print $2 }')
-        EXPECTED_RESULT_SIGN=$(echo $EXPECTED_RESULT  | awk -F';;' '{ print $3 }')
-        EXPECTED_RESULT_DISPLAY_TYPE=$(echo $EXPECTED_RESULT  | awk -F';;' '{ print $4 }')
+        TYPE=$(echo $test | awk -F${AWK_LINE_DELIM} '{ print $1 }')
+        DESCRIPTION=$(echo $test | awk -F${AWK_LINE_DELIM} '{ print $2 }')
+        COMMAND=$(echo $test | awk -F${AWK_LINE_DELIM} '{ print $3 }')
+        EXPECTED_RESULT=$(echo $test | awk -F${AWK_LINE_DELIM} '{ print $4 }')
+        OUTPUT_IF_EXPECTED=$(echo $test | awk -F${AWK_LINE_DELIM} '{ print $5 }')
+        EXPECTED_RESULT_TYPE=$(echo $EXPECTED_RESULT  | awk -F${AWK_EXPECT_DELIM} '{ print $1 }')
+        EXPECTED_RESULT_VALUE=$([[ "${EXPECTED_RESULT_TYPE}" == "cmd" ]] && echo $EXPECTED_RESULT  | awk -F${AWK_EXPECT_DELIM} '{ print $2 }' | bash || echo $EXPECTED_RESULT | awk -F${AWK_EXPECT_DELIM} '{ print $2 }')
+        EXPECTED_RESULT_SIGN=$(echo $EXPECTED_RESULT  | awk -F${AWK_EXPECT_DELIM} '{ print $3 }')
+        EXPECTED_RESULT_DISPLAY_TYPE=$(echo $EXPECTED_RESULT  | awk -F${AWK_EXPECT_DELIM} '{ print $4 }')
         case $TYPE in
                 "SQL")
                         CURRENT_RESULT=`/usr/bin/env mysql -h$db_host -u$db_user -p$db_passwd -e $COMMAND | grep -E -o "[0-9]+"`
