@@ -8,8 +8,8 @@ Help()
    echo "The script will help to diagnose somes cases on your Centreon platform."
    echo "Syntax: [-h|d]"
    echo "options:"
-   echo "h     Print this help."
-   echo "d     Display debug"
+   echo "-h     Print this help."
+   echo "-d     Display debug"
    echo
 }
 conf_path=/etc/centreon/conf.pm
