@@ -6,11 +6,11 @@ Help()
 {
    # Display Help
    echo "The script will help to diagnose somes cases on your Centreon platform."
-   echo "Syntax: [-h|c PATH_TO_CHECK_FILE|d|]"
+   echo "Syntax: [-h|c PATH_TO_CHECK_LIST|d|]"
    echo "options:"
    echo "h     Print this help."
-   echo "c     Use local check_file."
-   echo "      ie: -c PATH_TO_CHECK_FILE"
+   echo "c     Use local check_list."
+   echo "      ie: -c PATH_TO_CHECK_LIST"
    echo "d     Display debug."
    echo
 }
@@ -107,14 +107,14 @@ while getopts "hdc:" option; do
          ;;
 
       c) #Use localcheck_file
-         [[ ! -f $OPTARG ]] && echo "The specified local check_file doesn't exist." && exit || CHECK_FILE_PATH=$OPTARG
+         [[ ! -f $OPTARG ]] && echo "The specified local check_file doesn't exist." && exit || CHECK_LIST_PATH=$OPTARG
          ;;
      \?) # Invalid option
          exit;;
    esac
 done
-[[ -f $CHECK_FILE_PATH ]] && CURL_URL=file:///$CHECK_FILE_PATH || CURL_URL=https://raw.githubusercontent.com/alexvea/diag/main/data/check_list
-echo "### Using check_file : $CURL_URL ###"
+[[ -f $CHECK_LIST_PATH ]] && CURL_URL=file:///$CHECK_LIST_PATH || CURL_URL=https://raw.githubusercontent.com/alexvea/diag/main/data/check_list
+echo "### Using check_list : $CURL_URL ###"
 download_list=`curl_download_list $CURL_URL`
 nb_line=`echo "$download_list" | wc -l`
 x=0
