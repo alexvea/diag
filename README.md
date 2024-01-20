@@ -12,10 +12,13 @@
 ## Help :
 ```
 The script will help to diagnose somes cases on your Centreon platform.
-Syntax: [-h|d]
+Syntax: [-h|c PATH_TO_CHECK_FILE|d|]
 options:
 h     Print this help.
-d     Display debug
+c     Use local check_file.
+      ie: -c PATH_TO_CHECK_FILE
+d     Display debug.
+
 ```
 
 ## Functionnalities :
