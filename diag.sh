@@ -6,10 +6,12 @@ Help()
 {
    # Display Help
    echo "The script will help to diagnose somes cases on your Centreon platform."
-   echo "Syntax: [-h|d]"
+   echo "Syntax: [-h|c PATH_TO_CHECK_FILE|d|]"
    echo "options:"
-   echo "-h     Print this help."
-   echo "-d     Display debug"
+   echo "h     Print this help."
+   echo "c     Use local check_file."
+   echo "      ie: -c PATH_TO_CHECK_FILE"
+   echo "d     Display debug."
    echo
 }
 conf_path=/etc/centreon/conf.pm
@@ -37,7 +39,7 @@ DEBUG=0
 #set +x
 
 function curl_download_list {
-        curl -s https://raw.githubusercontent.com/alexvea/diag/main/data/check_list
+        /usr/bin/env curl -s $1
 }
 
 function test_value {
@@ -95,7 +97,7 @@ function validate_line {
         !(true) {exit err}' <<< $1
 }
 
-while getopts "n:arhd" option; do
+while getopts "hdc:" option; do
    case $option in
       h) # display Help
          Help
@@ -103,11 +105,17 @@ while getopts "n:arhd" option; do
       d) #display debug
          DEBUG=1
          ;;
+
+      c) #Use localcheck_file
+         [[ ! -f $OPTARG ]] && echo "The specified local check_file doesn't exist." && exit || CHECK_FILE_PATH=$OPTARG
+         ;;
      \?) # Invalid option
          exit;;
    esac
 done
-download_list=`curl_download_list`
+[[ -f $CHECK_FILE_PATH ]] && CURL_URL=file:///$CHECK_FILE_PATH || CURL_URL=https://raw.githubusercontent.com/alexvea/diag/main/data/check_list
+echo "### Using check_file : $CURL_URL ###"
+download_list=`curl_download_list $CURL_URL`
 nb_line=`echo "$download_list" | wc -l`
 x=0
 for test in $download_list; do
