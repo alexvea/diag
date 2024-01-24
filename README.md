@@ -55,6 +55,9 @@ example with SQL command type and cmd for expected type value (to compare the va
 ```
 SQL|||Check if hosts is more than license limit|||SELECT COUNT(*) FROM centreon.host WHERE host_register='1'|||cmd;;;nb=`/usr/bin/env grep -Po '(?<="hosts":)[^,]*' /etc/centreon/license.d/epp.license`;if [[ $nb -eq -1 ]]; then /usr/bin/env echo 99999999;else /usr/bin/env echo $nb; fi;;;>;;;error|||https://docs.centreon.com/docs/administration/licenses/#your-epp-license-is-not-valid
 ```
-
+example with CMD command type, case for Debian/RHEL OS and regex on expected value test : 
+```
+CMD|||Check if selinux is Disabled|||if /usr/bin/env grep -q "Debian" /etc/os-release ;then bin="getenforce"; else bin="getenforce" ; fi && $bin 2>/dev/null |||value;;;^(Disabled|NULL)$;;;regex;;;info|||Current mode is "RESULT_VALUE". Check this link : https://docs.centreon.com/docs/administration/secure-platform/#enable-selinux
+```
 
 
