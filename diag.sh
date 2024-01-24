@@ -51,16 +51,19 @@ function test_value {
 #$6 $OUTPUT_IF_EXPECTED
          case $3 in
                 "=")
-                        [[ $2 == $1 ]] 
+                        [[ $1 == $2 ]] 
                 ;;
                 "<")
-                        [[ $2 -lt $1 ]] 
+                        [[ $1 -lt $2 ]] 
                 ;;
                 ">")
-                        [[ $2 -gt $1 ]]
+                        [[ $1 -gt $2 ]]
                 ;;
                 "!=")
-                        [[ $2 != $1 ]]
+                        [[ $1 != $2 ]]
+                ;;
+                "regex")
+                        [[ $1 =~ $2 ]]
                 ;;
         esac
 [[ $? -eq 0 ]] && display_check ok $5 || display_check $4 $5 `echo $6 | sed "s/RESULT_VALUE/${YELLOW}$1${NC}/" | sed "s/EXPECTED_VALUE/${PURPLE}$2${NC}/g"`
@@ -88,7 +91,7 @@ function display_check {
 function validate_line {
         column_nb=5
         first_field_regex='^(CMD|SQL)'
-        forth_field_regex='^(value|cmd);;;.*;;;(=|>|<|!=);;;(info|error)'
+        forth_field_regex='^(value|cmd);;;.*;;;(=|>|<|!=|regex);;;(info|error)'
         five_field_regex='^$'
         awk -v AWK_LINE_DELIM="${AWK_LINE_DELIM}" -v column_nb="$column_nb" -v first_field_regex="$first_field_regex" -v forth_field_regex="$forth_field_regex" -v five_field_regex="$five_field_regex" -v err=0 'BEGIN{FS=OFS=AWK_LINE_DELIM} NF!=column_nb{print " Incorrect number of fields in this test : need " column_nb; err = 1;exit err}
         !($1~first_field_regex) {print " 1st field invalid, should be "first_field_regex; err = 1}
