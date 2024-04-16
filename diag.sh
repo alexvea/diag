@@ -6,12 +6,12 @@ Help()
 {
    # Display Help
    echo "The script will help to diagnose somes cases on your Centreon platform."
-   echo "Syntax: [-h|c PATH_TO_CHECK_LIST|d|]"
+   echo "Syntax: [-h|-c PATH_TO_CHECK_LIST|-d]"
    echo "options:"
-   echo "h     Print this help."
-   echo "c     Use local check_list."
+   echo "-h     Print this help."
+   echo "-c     Use local check_list."
    echo "      ie: -c PATH_TO_CHECK_LIST"
-   echo "d     Display debug."
+   echo "-d     Display debug."
    echo
 }
 conf_path=/etc/centreon/conf.pm
