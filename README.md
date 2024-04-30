@@ -45,7 +45,7 @@ d     Display debug.
 Using ||| and ;;; delimiters to be able to use the bash syntax || false condition and ;; case with oneliner.  
 
 ```
-Command type[SQL|CMD]|||Description of the test|||Test command|||Expected type value[value|cmd];;;Expected value;;;Test sign[=|>|<|!=];;;Tag[info|error]|||Non expected output
+Command type[SQL|CMD]|||Description of the test|||Test command|||Expected type value[value|cmd];;;Expected value;;;Test sign[=|>|<|!=|regex];;;Tag[info|error]|||Non expected output
 ```
 example with SQL command type :
 ```
