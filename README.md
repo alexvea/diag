@@ -1,5 +1,9 @@
 # FOR TESTS ONLY
 
+## Description :
+
+General diag script for SQL, ssh commands checks.
+
 ## Prerequisites :
 
 * Need to have internet to access the github website.
